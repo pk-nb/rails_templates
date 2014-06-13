@@ -51,10 +51,14 @@ end
 #  Gemfile
 # -------------------------------------------
 
-# Initally remove sqlite3 (added into development)
-run %q[sed -n '/sqlite3/!p' ./Gemfile >> temp]
-remove_file 'Gemfile'
-run %q[mv temp Gemfile]
+# Nevermind, just run a postgres db locally
+# (use `-d` (`--database=`) flag with `rails new`)
+# But it was such a nice --command-- hack though.
+
+# # Initally remove sqlite3 (added into development)
+# run %q[sed -n '/sqlite3/!p' ./Gemfile >> temp]
+# remove_file 'Gemfile'
+# run %q[mv temp Gemfile]
 
 # Use slim for templates
 gem 'slim'
@@ -64,7 +68,7 @@ gem 'normalize-rails'
 
 # Better Errors for better stack traces, REPL, etc
 gem_group :development do
-  gem 'sqlite3'
+  # gem 'sqlite3'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'html2slim'
