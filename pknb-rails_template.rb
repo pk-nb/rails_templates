@@ -15,7 +15,6 @@ end
 
 # Add to .gitignore
 run %q[echo "
-/config/database.yml
 /coverage/*
 /.rvmrc
 /.ruby-version
@@ -48,17 +47,23 @@ EOF
 end
 
 # -------------------------------------------
-#  Gemfile
+#  Configure application
 # -------------------------------------------
 
-# Nevermind, just run a postgres db locally
-# (use `-d` (`--database=`) flag with `rails new`)
-# But it was such a nice --command-- hack though.
+application do
+%q[
+    config.time_zone = 'Eastern Time (US & Canada)'
 
-# # Initally remove sqlite3 (added into development)
-# run %q[sed -n '/sqlite3/!p' ./Gemfile >> temp]
-# remove_file 'Gemfile'
-# run %q[mv temp Gemfile]
+    config.generators do |g|
+      g.assets false
+      g.helper false
+    end
+]
+end
+
+# -------------------------------------------
+#  Gemfile
+# -------------------------------------------
 
 # Use slim for templates
 gem 'slim'
@@ -68,8 +73,8 @@ gem 'normalize-rails'
 
 # Better Errors for better stack traces, REPL, etc
 gem_group :development do
-  # gem 'sqlite3'
   gem 'better_errors'
+  gem 'quiet_assets'
   gem 'binding_of_caller'
   gem 'html2slim'
 
@@ -80,10 +85,19 @@ gem_group :development do
   gem 'guard-rails'
 end
 
+# Use rspec > minitest
+gem_group :test, :development do
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+end
+
+gem_group :assets do
+  gem 'compass-rails'
+end
+
 # Get Gemfile.lock a-ok for Heroku
 run 'bundle install --without production'
 run 'bundle update'
-run 'bundle install'
 
 # -------------------------------------------
 #  Slim > ERB
@@ -91,6 +105,24 @@ run 'bundle install'
 
 run 'erb2slim .'
 remove_file "app/views/layouts/application.html.erb"
+
+# -------------------------------------------
+#  rspec > minitest
+# -------------------------------------------
+
+# Remove minitest and generate rspec
+run "rm -fR test"
+run "rails g rspec:install"
+run "rm .rspec"
+
+# Use custom .rspec as default has awful warnings enabled
+file ".rspec" do
+  <<-EOF
+--color
+--require spec_helper
+
+EOF
+end
 
 # -------------------------------------------
 #  Init repo
