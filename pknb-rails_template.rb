@@ -70,6 +70,7 @@ gem 'slim'
 gem 'slim-rails'
 gem 'redcarpet'
 gem 'normalize-rails'
+gem 'simple_form'
 
 # Better Errors for better stack traces, REPL, etc
 gem_group :development do
@@ -85,10 +86,16 @@ gem_group :development do
   gem 'guard-rails'
 end
 
-# Use rspec > minitest
 gem_group :test, :development do
-  gem 'rspec-rails'
+  gem 'pry'
+  gem 'rspec-rails', '~> 2.14.2'
   gem 'factory_girl_rails'
+end
+
+gem_group :test do
+  gem 'capybara'
+  gem 'shoulda-matchers'
+  gem 'launchy', :require => false
 end
 
 gem_group :assets do
@@ -98,6 +105,7 @@ end
 # Get Gemfile.lock a-ok for Heroku
 run 'bundle install --without production'
 run 'bundle update'
+
 
 # -------------------------------------------
 #  Slim > ERB
@@ -123,6 +131,8 @@ file ".rspec" do
 
 EOF
 end
+
+run 'bundle exec spring binstub --all'
 
 # -------------------------------------------
 #  Init repo
