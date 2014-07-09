@@ -73,6 +73,8 @@ gem 'slim-rails'
 gem 'redcarpet'
 gem 'normalize-rails'
 gem 'simple_form'
+gem 'bcrypt', '~> 3.1.7'
+gem 'foreigner'
 
 # Better Errors for better stack traces, REPL, etc
 gem_group :development do
