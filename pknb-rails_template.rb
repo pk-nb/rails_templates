@@ -63,6 +63,30 @@ application do
 ]
 end
 
+route <<-ROUTES
+  # need this because Rails `rescue_from` doesn't catch ActionController::RoutingError
+  unless Rails.env.development?
+    match '*path',  :to => 'application#render_404', :via => :all
+  end
+ROUTES
+
+insert_into_file "app/controllers/application_controller.rb", :after => "protect_from_forgery\n" do
+  <<-APPCONTROLLER
+
+  unless Rails.env.development?
+    rescue_from ActiveRecord::RecordNotFound, ActionView::MissingTemplate,
+      :with => :render_404
+  end
+
+  def render_404
+    render :template => 'shared/404', :formats => [:html], :status => 404
+  end
+APPCONTROLLER
+end
+
+empty_directory 'app/views/shared'
+run 'touch app/views/shared/404.html.slim'
+
 # -------------------------------------------
 #  Gemfile
 # -------------------------------------------
